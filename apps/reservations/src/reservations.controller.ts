@@ -17,7 +17,6 @@ export class ReservationsController {
 
   @Post()
   create(@Body() createReservationDto: CreateReservationDto) {
-    console.log(createReservationDto, 'Controller Create Reservation DTO');
     return this.reservationsService.create(createReservationDto);
   }
 

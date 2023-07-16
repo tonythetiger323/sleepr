@@ -10,7 +10,6 @@ export class ReservationsService {
   ) {}
 
   create(createReservationDto: CreateReservationDto) {
-    console.log(createReservationDto, 'Create Reservation DTO');
     return this.reservationsRepository.create({
       ...createReservationDto,
       timestamp: new Date(),
