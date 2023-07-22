@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Env
 .env
+
+#GCP
+sleepr-393500-6fbd7e3417f7.json
