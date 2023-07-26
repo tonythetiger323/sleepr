@@ -1,0 +1,38 @@
+services:
+  e2e:
+    build:
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./specs:/usr/src/app/specs
+    depends_on:
+      - reservations
+      - auth
+      - payments
+      - notifications
+      - mongo
+  reservations:
+    image: us-central1-docker.pkg.dev/sleepr-393500/reservations/production
+    env_file:
+      - ../apps/reservations/.env
+    ports:
+      - '3000:3000'
+  mongo:
+    image: mongo
+  auth:
+    image: us-central1-docker.pkg.dev/sleepr-393500/auth/production
+    env_file:
+      - ../apps/auth/.env
+    ports:
+      - '3001:3001'
+  payments:
+    image: us-central1-docker.pkg.dev/sleepr-393500/payments/production
+    ports:
+      - '3003:3003'
+    env_file:
+      - ../apps/payments/.env
+  notifications:
+    image: us-central1-docker.pkg.dev/sleepr-393500/notifications/production
+    ports:
+      - '3004:3004'
+    env_file:
+      - ../apps/notifications/.env
