@@ -4,19 +4,24 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import { User, Role } from '@app/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
 import { GetUserDto } from './dto/get-user.dto';
+import { UsersRepository } from './users.repository';
+import { RoleDto } from './dto/role.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
+
   async createUser(createUserDto: CreateUserDto) {
     await this.validateCreateUserDto(createUserDto);
-    return this.usersRepository.create({
+    const user = new User({
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
+      roles: createUserDto.roles?.map((roleDto: RoleDto) => new Role(roleDto)),
     });
+    return this.usersRepository.create(user);
   }
 
   private async validateCreateUserDto(createUserDto: CreateUserDto) {
@@ -32,12 +37,12 @@ export class UsersService {
     const user = await this.usersRepository.findOne({ email });
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
-      throw new UnauthorizedException('Credentials are not valid');
+      throw new UnauthorizedException('Credentials are not valid.');
     }
     return user;
   }
 
   async getUser(getUserDto: GetUserDto) {
-    return this.usersRepository.findOne(getUserDto);
+    return this.usersRepository.findOne(getUserDto, { roles: true });
   }
 }
